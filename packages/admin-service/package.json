@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "node main.mjs"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.0.3",
+    "mongodb": "^5.0.1"
+  }
+}

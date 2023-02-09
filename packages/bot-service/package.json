@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "node main.mjs"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.12.2",
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.0.3"
+  }
+}

@@ -1,0 +1,15 @@
+<div class="bg-zinc-700 h-full flex flex-col items-center justify-center p-5">
+  <p class="text-5xl mb-10">Sign in</p>
+
+  <input class="my-5 text-zinc-800 p-2 rounded" placeholder="Username" [formControl]="username" />
+  <input
+    type="password"
+    class="text-zinc-800 p-2 rounded"
+    placeholder="Password"
+    [formControl]="password"
+  />
+
+  <button class="bg-zinc-600 mt-10 p-2 rounded hover:bg-zinc-500 w-full" (click)="onClick()">
+    Sign in
+  </button>
+</div>

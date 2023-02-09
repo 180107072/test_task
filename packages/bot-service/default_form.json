@@ -1,0 +1,226 @@
+[
+  {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "🍕 Меню"
+    }
+  },
+  {
+    "type": "divider"
+  },
+  {
+    "type": "section",
+    "block_id": "pizza",
+    "text": {
+      "type": "mrkdwn",
+      "text": "Название пиццы"
+    },
+    "accessory": {
+      "type": "static_select",
+      "action_id": "order",
+
+      "placeholder": {
+        "type": "plain_text",
+        "emoji": true,
+        "text": "Выбрать пиццу"
+      },
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "Маргарита"
+          },
+          "value": "margarita"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "Пепперони"
+          },
+          "value": "pepperoni"
+        }
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "block_id": "size",
+    "text": {
+      "type": "mrkdwn",
+      "text": "Размер"
+    },
+    "accessory": {
+      "type": "static_select",
+      "action_id": "order",
+
+      "placeholder": {
+        "type": "plain_text",
+        "emoji": true,
+        "text": "Размер"
+      },
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "25 см"
+          },
+          "value": "25"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "30 см"
+          },
+          "value": "30"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "35 см"
+          },
+          "value": "35"
+        }
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "block_id": "dough",
+    "text": {
+      "type": "mrkdwn",
+      "text": "Тесто"
+    },
+    "accessory": {
+      "type": "static_select",
+      "action_id": "order",
+
+      "placeholder": {
+        "type": "plain_text",
+        "emoji": true,
+        "text": "Тесто"
+      },
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "Обычное"
+          },
+          "value": "regular"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "Тонкое"
+          },
+          "value": "thin"
+        }
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "block_id": "side",
+    "text": {
+      "type": "mrkdwn",
+      "text": "Бортик"
+    },
+    "accessory": {
+      "type": "static_select",
+      "action_id": "order",
+
+      "placeholder": {
+        "type": "plain_text",
+        "emoji": true,
+        "text": "Бортик"
+      },
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "Обычный"
+          },
+          "value": "regular"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "Сырный"
+          },
+          "value": "cheese"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "Колбасный"
+          },
+          "value": "sausage"
+        }
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "block_id": "additives",
+    "text": {
+      "type": "mrkdwn",
+      "text": "Добавки"
+    },
+    "accessory": {
+      "type": "static_select",
+      "action_id": "order",
+      "placeholder": {
+        "type": "plain_text",
+        "emoji": true,
+        "text": "Добавки"
+      },
+      "options": [
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "больше сыра"
+          },
+          "value": "cheese"
+        },
+        {
+          "text": {
+            "type": "plain_text",
+            "emoji": true,
+            "text": "больше мяса"
+          },
+          "value": "meat"
+        }
+      ]
+    }
+  },
+  {
+    "type": "divider"
+  },
+  {
+    "type": "actions",
+    "block_id": "submit",
+    "elements": [
+      {
+        "type": "button",
+        "action_id": "submit",
+        "text": {
+          "type": "plain_text",
+          "emoji": true,
+          "text": "Заказать"
+        },
+        "value": "click_me_123"
+      }
+    ]
+  }
+]
