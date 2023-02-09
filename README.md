@@ -25,6 +25,24 @@ choco install rabbitmq # on windows
 
 set `.env` file with your credentials.(like DB URL)
 
+`.env` files placed inside:
+
+`/packages/admin-service`:
+
+```
+HTTP_SERVER_PORT
+MONGODB_CONNECTION_URL
+```
+
+`/packages/bot-service`:
+
+```
+SLACK_APP_TOKEN
+SLACK_BOT_PORT
+SLACK_TOKEN
+SLACK_SECRET
+```
+
 Run the app
 
 ```bash

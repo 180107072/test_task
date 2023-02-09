@@ -1,6 +1,6 @@
 import amqp from 'amqplib'
 import { config } from 'dotenv'
-import { IncomingMessage, ServerResponse, createServer } from 'node:http'
+import {  createServer } from 'node:http'
 import { MongoClient } from 'mongodb'
 import { randomUUID } from 'node:crypto'
 
@@ -42,7 +42,7 @@ const clients = new Map()
  */
 const verifyTestUser = async ({ username, password }) => {
   const user = await users.findOne({ username, password })
-  return !!user
+  return user
 }
 
 /**

@@ -1,9 +1,10 @@
 import slackBolt from '@slack/bolt'
 import amqp from 'amqplib'
+import { readFileSync } from 'node:fs'
 import { config } from 'dotenv'
-import default_form from './default_form.json' assert { type: 'json' }
 
-const { App, LogLevel } = slackBolt
+const { App } = slackBolt
+const default_form = JSON.parse(readFileSync('./default_form.json'))
 
 config()
 
