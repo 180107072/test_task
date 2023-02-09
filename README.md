@@ -10,6 +10,17 @@ cd test_task
 pnpm install
 ```
 
+### Requirement
+
+This project requires Rabbitmq
+
+To install run
+
+```bash
+brew install rabbitmq # on macs
+choco install rabbitmq # on windows
+```
+
 ### Running the app
 
 set `.env` file with your credentials.(like DB URL)
