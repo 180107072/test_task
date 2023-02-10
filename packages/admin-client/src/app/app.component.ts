@@ -24,7 +24,6 @@ export class AppComponent {
     sseSource.onmessage = (event) => {
       const data = JSON.parse(event.data)
 
-      console.log(data)
       if (Array.isArray(data)) {
         this.ordersService.orderSet(data as Order[])
       } else {

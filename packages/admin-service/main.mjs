@@ -1,8 +1,8 @@
+import { createServer } from 'node:http'
+import { randomUUID } from 'node:crypto'
 import amqp from 'amqplib'
 import { config } from 'dotenv'
-import {  createServer } from 'node:http'
-import { MongoClient } from 'mongodb'
-import { randomUUID } from 'node:crypto'
+import { MongoClient, ObjectId } from 'mongodb'
 
 config()
 
@@ -31,7 +31,17 @@ createTestUser()
 const connection = await amqp.connect('amqp://127.0.0.1:5672')
 const channel = await connection.createChannel()
 
-await channel.assertQueue('test-queue')
+const exchange = 'example-exchange'
+const ordersQueue = 'example-queue'
+const statusQueue = 'example-status-queue'
+
+await channel.assertExchange(exchange, 'direct', { durable: true })
+await channel.assertQueue(ordersQueue, { durable: true })
+await channel.assertQueue(statusQueue, { durable: true })
+await channel.bindQueue(ordersQueue, exchange, 'orders')
+await channel.bindQueue(statusQueue, exchange, 'statuses')
+
+await channel.prefetch(1)
 
 const httpServer = createServer()
 const clients = new Map()
@@ -58,11 +68,11 @@ const parsePostRequest = async (request) =>
         const body = JSON.parse(postData)
         resolve(body)
       } catch (e) {
-        reject(e)
+        reject({})
       }
     })
 
-    request.on('error', reject)
+    request.on('error', () => reject({}))
   })
 
 /**
@@ -72,6 +82,7 @@ const parsePostRequest = async (request) =>
 const handleSignInRequest = async (request, response) => {
   const body = await parsePostRequest(request)
   const user = await verifyTestUser(body)
+
   if (user) {
     response.statusCode = 200
     return response.end(JSON.stringify(body))
@@ -105,15 +116,29 @@ const handleOrderRequestListener = async (request, response) => {
   request.on('close', () => clients.delete(id))
 }
 
-channel.consume('orders-queue', (data) => {
-  const order = { ...JSON.parse(data.content), status: 'accepted' }
+channel.consume(ordersQueue, async (data) => {
+  console.log('NEW ORDER')
+  const response = JSON.parse(data.content)
+  const order = { ...response, status: 'accepted' }
 
   orders.insertOne(order)
   const writeData = `data: ${JSON.stringify(order)}\n\n`
 
   clients.forEach((response) => response.write(writeData))
 
-  channel.ackAll()
+  try {
+    channel.ack(data)
+
+    channel.publish(
+      exchange,
+      'statuses',
+      Buffer.from(JSON.stringify({ status: 'accepted', channel: response.channel }))
+    )
+  } catch (err) {
+    console.error(`Error processing message: ${err}`)
+
+    channel.nack(data, false, false)
+  }
 })
 
 /**
@@ -129,7 +154,16 @@ const handleChangeOrderStatusRequest = async (request, response) => {
     return response.end()
   }
 
-  console.log(body)
+  orders.updateOne({ _id: new ObjectId(body.id) }, { $set: { status: body.status } })
+
+  channel.publish(
+    exchange,
+    'statuses',
+    Buffer.from(JSON.stringify({ status: body.status, channel: body.channel }))
+  )
+
+  response.statusCode = 200
+  response.end()
 }
 
 const routes = new Map()

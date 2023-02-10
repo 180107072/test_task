@@ -6,6 +6,8 @@ export type User = {
 export type OrderStatus = 'accepted' | 'preparing' | 'delivery' | 'delivered' | 'canceled'
 
 export type Order = {
+  _id: string
+  channel: string
   avatar: string
   name: string
   pizza: string

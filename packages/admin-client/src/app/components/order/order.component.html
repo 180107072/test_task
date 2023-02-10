@@ -7,7 +7,7 @@
     <span class="mx-2">{{ order.name }}</span>
     <div class="ml-auto text-sm bg-red-200 p-1 rounded-md flex">
       <div *ngFor="let status of statuses" class="mx-4">
-        <button [ngClass]="{ 'bg-green-100': order.status === status }" class="px-4 p-1 rounded-md">{{ status }}</button>
+        <button [ngClass]="{ 'bg-green-100': order.status === status }" class="px-4 p-1 rounded-md" (click)="onStatusChange(order, status)">{{ status }}</button>
       </div>
     </div>
   </div>
