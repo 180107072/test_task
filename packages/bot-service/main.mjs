@@ -1,17 +1,20 @@
 import slackBolt from '@slack/bolt'
-import amqp from 'amqplib'
 import { readFileSync } from 'node:fs'
 import { config } from 'dotenv'
+import { createConnection, connectionConfig } from '@flow/common'
 
+const {
+  exchange,
+  queues: [ordersQueue, statusQueue],
+} = connectionConfig
+
+const channel = await createConnection()
 const { App } = slackBolt
 const default_form = JSON.parse(readFileSync('./default_form.json'))
 
 config()
 
 const SLACK_BOT_PORT = process.env.SLACK_BOT_PORT
-
-const connection = await amqp.connect('amqp://127.0.0.1:5672')
-const channel = await connection.createChannel()
 
 const app = new App({
   token: process.env.SLACK_TOKEN,
@@ -20,16 +23,6 @@ const app = new App({
   port: SLACK_BOT_PORT,
   socketMode: true,
 })
-
-const exchange = 'example-exchange'
-const ordersQueue = 'example-queue'
-const statusQueue = 'example-status-queue'
-
-await channel.assertExchange(exchange, 'direct', { durable: true })
-await channel.assertQueue(ordersQueue, { durable: true })
-await channel.assertQueue(statusQueue, { durable: true })
-await channel.bindQueue(ordersQueue, exchange, 'orders')
-await channel.bindQueue(statusQueue, exchange, 'statuses')
 
 await app.start()
 console.log(`⚡️ Slack Bolt app is running on port ${SLACK_BOT_PORT}!`)
@@ -57,7 +50,7 @@ app.action({ block_id: 'submit' }, async ({ body, say, ack }) => {
 
   channel.publish(
     exchange,
-    'orders',
+    ordersQueue.key,
     Buffer.from(
       JSON.stringify({
         avatar: user.profile.image_48,
@@ -79,12 +72,19 @@ const statuses = {
   canceled: 'Отмена',
 }
 
-channel.consume(statusQueue, async (data) => {
-  console.log('STATUS CHANGE')
-  const { status, channel } = JSON.parse(data.content)
+channel.consume(statusQueue.name, async (data) => {
+  const response = JSON.parse(data.content)
 
   app.client.chat.postMessage({
-    channel,
-    text: statuses[status] || 'error',
+    channel: response.channel,
+    text: statuses[response.status] || 'error',
   })
+
+  try {
+    channel.ack(data)
+  } catch (err) {
+    console.error(`Error processing message: ${err}`)
+
+    channel.nack(data, false, false)
+  }
 })

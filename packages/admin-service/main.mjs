@@ -1,8 +1,15 @@
 import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
-import amqp from 'amqplib'
 import { config } from 'dotenv'
 import { MongoClient, ObjectId } from 'mongodb'
+import { createConnection, connectionConfig } from '@flow/common'
+
+const {
+  exchange,
+  queues: [ordersQueue, statusQueue],
+} = connectionConfig
+
+const channel = await createConnection()
 
 config()
 
@@ -27,21 +34,6 @@ const createTestUser = async () => {
 }
 
 createTestUser()
-
-const connection = await amqp.connect('amqp://127.0.0.1:5672')
-const channel = await connection.createChannel()
-
-const exchange = 'example-exchange'
-const ordersQueue = 'example-queue'
-const statusQueue = 'example-status-queue'
-
-await channel.assertExchange(exchange, 'direct', { durable: true })
-await channel.assertQueue(ordersQueue, { durable: true })
-await channel.assertQueue(statusQueue, { durable: true })
-await channel.bindQueue(ordersQueue, exchange, 'orders')
-await channel.bindQueue(statusQueue, exchange, 'statuses')
-
-await channel.prefetch(1)
 
 const httpServer = createServer()
 const clients = new Map()
@@ -116,31 +108,6 @@ const handleOrderRequestListener = async (request, response) => {
   request.on('close', () => clients.delete(id))
 }
 
-channel.consume(ordersQueue, async (data) => {
-  console.log('NEW ORDER')
-  const response = JSON.parse(data.content)
-  const order = { ...response, status: 'accepted' }
-
-  orders.insertOne(order)
-  const writeData = `data: ${JSON.stringify(order)}\n\n`
-
-  clients.forEach((response) => response.write(writeData))
-
-  try {
-    channel.ack(data)
-
-    channel.publish(
-      exchange,
-      'statuses',
-      Buffer.from(JSON.stringify({ status: 'accepted', channel: response.channel }))
-    )
-  } catch (err) {
-    console.error(`Error processing message: ${err}`)
-
-    channel.nack(data, false, false)
-  }
-})
-
 /**
  * @param {IncomingMessage} request
  * @param {ServerResponse} response
@@ -158,19 +125,13 @@ const handleChangeOrderStatusRequest = async (request, response) => {
 
   channel.publish(
     exchange,
-    'statuses',
+    statusQueue.key,
     Buffer.from(JSON.stringify({ status: body.status, channel: body.channel }))
   )
 
   response.statusCode = 200
   response.end()
 }
-
-const routes = new Map()
-
-routes.set('/sign-in', handleSignInRequest)
-routes.set('/orders', handleOrderRequestListener)
-routes.set('/change-status', handleChangeOrderStatusRequest)
 
 /**
  * @param {IncomingMessage} request
@@ -195,5 +156,31 @@ const handleHTTPRequest = (request, response) => {
   method(request, response)
 }
 
+const routes = new Map()
+
+routes.set('/sign-in', handleSignInRequest)
+routes.set('/orders', handleOrderRequestListener)
+routes.set('/change-status', handleChangeOrderStatusRequest)
+
 httpServer.on('request', handleHTTPRequest)
 httpServer.listen(PORT, () => console.log(`Server running in: http://127.0.0.1:${PORT}`))
+
+channel.consume(ordersQueue.name, async (data) => {
+  const response = JSON.parse(data.content)
+  const order = { ...response, status: 'accepted', channel: response.channel }
+
+  orders.insertOne(order)
+  const writeData = `data: ${JSON.stringify(order)}\n\n`
+
+  clients.forEach((response) => response.write(writeData))
+
+  try {
+    channel.ack(data)
+
+    channel.publish(exchange, statusQueue.key, Buffer.from(JSON.stringify(order)))
+  } catch (err) {
+    console.error(`Error processing message: ${err}`)
+
+    channel.nack(data, false, false)
+  }
+})

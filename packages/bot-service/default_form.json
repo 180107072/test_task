@@ -32,7 +32,7 @@
             "emoji": true,
             "text": "Маргарита"
           },
-          "value": "margarita"
+          "value": "Маргарита"
         },
         {
           "text": {
@@ -40,7 +40,7 @@
             "emoji": true,
             "text": "Пепперони"
           },
-          "value": "pepperoni"
+          "value": "Пепперони"
         }
       ]
     }
@@ -68,7 +68,7 @@
             "emoji": true,
             "text": "25 см"
           },
-          "value": "25"
+          "value": "25см"
         },
         {
           "text": {
@@ -76,7 +76,7 @@
             "emoji": true,
             "text": "30 см"
           },
-          "value": "30"
+          "value": "30см"
         },
         {
           "text": {
@@ -84,7 +84,7 @@
             "emoji": true,
             "text": "35 см"
           },
-          "value": "35"
+          "value": "35см"
         }
       ]
     }
@@ -112,7 +112,7 @@
             "emoji": true,
             "text": "Обычное"
           },
-          "value": "regular"
+          "value": "Обычное"
         },
         {
           "text": {
@@ -120,7 +120,7 @@
             "emoji": true,
             "text": "Тонкое"
           },
-          "value": "thin"
+          "value": "Тонкое"
         }
       ]
     }
@@ -148,7 +148,7 @@
             "emoji": true,
             "text": "Обычный"
           },
-          "value": "regular"
+          "value": "Обычный"
         },
         {
           "text": {
@@ -156,7 +156,7 @@
             "emoji": true,
             "text": "Сырный"
           },
-          "value": "cheese"
+          "value": "Сырный"
         },
         {
           "text": {
@@ -164,7 +164,7 @@
             "emoji": true,
             "text": "Колбасный"
           },
-          "value": "sausage"
+          "value": "Колбасный"
         }
       ]
     }
@@ -189,17 +189,17 @@
           "text": {
             "type": "plain_text",
             "emoji": true,
-            "text": "больше сыра"
+            "text": "Больше сыра"
           },
-          "value": "cheese"
+          "value": "Больше сыра"
         },
         {
           "text": {
             "type": "plain_text",
             "emoji": true,
-            "text": "больше мяса"
+            "text": "Больше мяса"
           },
-          "value": "meat"
+          "value": "Больше мяса"
         }
       ]
     }

@@ -1,0 +1,10 @@
+{
+  "name": "@flow/common",
+  "main": "./main.mjs",
+  "scripts": {
+    "dev": "echo Works"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  }
+}
